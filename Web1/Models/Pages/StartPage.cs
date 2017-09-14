@@ -3,6 +3,7 @@ using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.SpecializedProperties;
+using EPiServer.Web;
 using Web1.Models.Blocks;
 
 namespace Web1.Models.Pages
@@ -25,6 +26,12 @@ namespace Web1.Models.Pages
             Order = 320)]
         [CultureSpecific]
         public virtual ContentArea MainContentArea { get; set; }
+
+        [Display(
+            GroupName = SystemTabNames.Content,
+            Order = 330)]
+        [UIHint(UIHint.Image)]
+        public virtual ContentReference LandingImage { get; set; }
 
         [Display(GroupName = Global.GroupNames.SiteSettings, Order = 300)]
         public virtual LinkItemCollection ProductPageLinks { get; set; }

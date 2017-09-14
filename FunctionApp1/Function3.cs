@@ -12,28 +12,24 @@ using Shared.Models;
 
 namespace FunctionApp1
 {
+    [StorageAccount("MyStorageConnection")]
     public static class Function3
     {
         [FunctionName("Function3")]
-        [return: Queue("3-done", Connection = "MyStorageConnection")]
+        [return: Queue("3-done")]
         public static async Task<CloudQueueMessage> Run(
-            [QueueTrigger("2-to-ascii", Connection = "MyStorageConnection")] AsciiArtRequest request,
-            [Blob("in-container/{BlobRef}", Connection = "MyStorageConnection")] CloudBlockBlob inBlob,
-            [Blob("out-container/{BlobRef}-done", FileAccess.Write, Connection = "MyStorageConnection")] Stream outBlob,
+            [QueueTrigger("2-to-ascii")]                            AsciiArtRequest request,
+            [Blob("in-container/{BlobRef}", FileAccess.Read)]       Stream inBlob,
+            [Blob("out-container/{BlobRef}", FileAccess.Write)]     Stream outBlob,
             TraceWriter log)
         {
             log.Info("Making ASCII art...");
 
-            using (var stream = new MemoryStream())
-            {
-                await inBlob.DownloadToStreamAsync(stream);
-                var result = ConvertImageToAscii(stream);
+            var convertedImage = ConvertImageToAscii(inBlob);
+            await outBlob.WriteAsync(convertedImage, 0, convertedImage.Length);
 
-                var resultBlob = $"{request.BlobRef}-done";
-
-                await outBlob.WriteAsync(result, 0, result.Length);
-                return new AsciiArtResult(resultBlob, request.BlobRef, request.Description, request.Tags).AsQueueItem();
-            }
+            var result = new AsciiArtResult(request.BlobRef, request.Description, request.Tags);
+            return result.AsQueueItem();
         }
 
 

@@ -35,20 +35,20 @@ namespace Web1.Business.Initialization
                 using (var stream = img.BinaryData.OpenRead())
                 {
                     var bytes = stream.ReadAllBytes();
-                    var result = CallFunction(bytes).GetAwaiter().GetResult();
+                    var result = CallFunction(img.ContentGuid.ToString(), bytes).GetAwaiter().GetResult();
                 }
             }
         }
 
         private static readonly HttpClient _funcClient = new HttpClient();
 
-        static async Task<string> CallFunction(byte[] byteData)
+        static async Task<string> CallFunction(string contentReference, byte[] byteData)
         {
             var uri = "http://localhost:7071/api/Function1";
 
             var req = new Req
                       {
-                          FileId = "pic.jpg",
+                          FileId = contentReference,
                           Content = byteData
                       };
 

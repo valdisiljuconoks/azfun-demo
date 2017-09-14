@@ -1,4 +1,24 @@
+@using EPiServer
+@using EPiServer.ServiceLocation
 @using Web1
+@using Web1.Models.Media
 @model PageViewModel<Web1.Models.Pages.StartPage>
 
-@Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { CssClass = "row equal-height", tag = Global.ContentAreaTags.FullWidth })
+@*@Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { CssClass = "row equal-height", tag = Global.ContentAreaTags.FullWidth })*@
+
+@{
+    Layout = null;
+}
+
+@{
+    var ascii = string.Empty;
+    var repo = ServiceLocator.Current.GetInstance<IContentRepository>();
+    if(Model.CurrentPage.LandingImage != null)
+    {
+        var image = repo.Get<ImageFile>(Model.CurrentPage.LandingImage);
+        ascii = image.AsciiArt;
+    }
+}
+<pre>
+    @Html.Raw(ascii)
+</pre>

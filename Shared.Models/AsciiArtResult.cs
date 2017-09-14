@@ -2,16 +2,14 @@ namespace Shared.Models
 {
     public class AsciiArtResult
     {
-        public AsciiArtResult(string resultBlobRef, string origBlobRef, string description, string[] tags)
+        public AsciiArtResult(string blobRef, string description, string[] tags)
         {
-            ResultBlobRef = resultBlobRef;
-            OrigBlobRef = origBlobRef;
+            BlobRef = blobRef;
             Description = description;
             Tags = tags;
         }
 
-        public string ResultBlobRef { get; }
-        public string OrigBlobRef { get; }
+        public string BlobRef { get; }
         public string Description { get; }
         public string[] Tags { get; }
     }
