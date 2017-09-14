@@ -15,10 +15,10 @@ namespace FunctionApp1
     public static class Function2
     {
         [FunctionName("Function2")]
-        [return: Queue("to-fun3", Connection = "MyStorageConnection")]
+        [return: Queue("2-to-ascii", Connection = "MyStorageConnection")]
         public static async Task<CloudQueueMessage> Run(
-            [QueueTrigger("to-fun2", Connection = "MyStorageConnection")] AnalysisReq request,
-            [Blob("container/{BlobRef}", Connection = "MyStorageConnection")] CloudBlockBlob inBlob,
+            [QueueTrigger("1-to-cognitive", Connection = "MyStorageConnection")] AnalysisReq request,
+            [Blob("in-container/{BlobRef}", Connection = "MyStorageConnection")] CloudBlockBlob inBlob,
             TraceWriter log)
         {
 

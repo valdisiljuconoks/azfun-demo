@@ -15,11 +15,11 @@ namespace FunctionApp1
     public static class Function3
     {
         [FunctionName("Function3")]
-        [return: Queue("done", Connection = "MyStorageConnection")]
+        [return: Queue("3-done", Connection = "MyStorageConnection")]
         public static async Task<CloudQueueMessage> Run(
-            [QueueTrigger("to-fun3", Connection = "MyStorageConnection")] AsciiArtRequest request,
-            [Blob("container/{BlobRef}", Connection = "MyStorageConnection")] CloudBlockBlob inBlob,
-            [Blob("container", Connection = "MyStorageConnection")] CloudBlobContainer outContainer,
+            [QueueTrigger("2-to-ascii", Connection = "MyStorageConnection")] AsciiArtRequest request,
+            [Blob("in-container/{BlobRef}", Connection = "MyStorageConnection")] CloudBlockBlob inBlob,
+            [Blob("out-container/{BlobRef}-done", FileAccess.Write, Connection = "MyStorageConnection")] Stream outBlob,
             TraceWriter log)
         {
             log.Info("Making ASCII art...");
@@ -29,25 +29,34 @@ namespace FunctionApp1
                 await inBlob.DownloadToStreamAsync(stream);
                 var result = ConvertImageToAscii(stream);
 
-                using (var upstream = new MemoryStream(Encoding.UTF8.GetBytes(result)))
-                {
-                    var resultBlob = $"{request.BlobRef}-done";
-                    var blob = outContainer.GetBlockBlobReference(resultBlob);
-                    await blob.UploadFromStreamAsync(upstream);
+                var resultBlob = $"{request.BlobRef}-done";
 
-                    return new AsciiArtResult(resultBlob, request.BlobRef, request.Description, request.Tags).AsQueueItem();
-                }
+                await outBlob.WriteAsync(result, 0, result.Length);
+                return new AsciiArtResult(resultBlob, request.BlobRef, request.Description, request.Tags).AsQueueItem();
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Copyright: Code for ASCII convert used from http://www.c-sharpcorner.com/article/generating-ascii-art-from-an-image-using-C-Sharp/
         private static readonly string[] _AsciiChars = { "#", "#", "@", "%", "=", "+", "*", ":", "-", ".", "&nbsp;" };
 
-        private static string ConvertImageToAscii(Stream image)
+        private static byte[] ConvertImageToAscii(Stream image)
         {
             var bitmap = new Bitmap(image, true);
             bitmap = GetReSizedImage(bitmap, 100);
-            return ConvertToAscii(bitmap);
+            return Encoding.UTF8.GetBytes(ConvertToAscii(bitmap));
         }
 
         private static Bitmap GetReSizedImage(Image inputBitmap, int asciiWidth)

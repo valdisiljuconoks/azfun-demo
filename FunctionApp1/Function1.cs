@@ -15,17 +15,13 @@ namespace FunctionApp1
         [FunctionName("Function1")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger("post")] Req request,
-            [Blob("container/{FileId}", Connection = "MyStorageConnection")] CloudBlockBlob outBlob,
-            [Queue("to-fun2", Connection = "MyStorageConnection")] CloudQueue queue,
+            [Blob("in-container/{FileId}", Connection = "MyStorageConnection")] CloudBlockBlob outBlob,
+            [Queue("1-to-cognitive", Connection = "MyStorageConnection")] CloudQueue queue,
             TraceWriter log)
         {
-            log.Info("C# HTTP trigger function processing a request...");
+            log.Info("Received image for processing...");
 
-            using (var stream = new MemoryStream(request.Content))
-            {
-                await outBlob.UploadFromStreamAsync(stream);
-            }
-
+            await outBlob.UploadFromByteArrayAsync(request.Content, 0, request.Content.Length);
             await queue.AddMessageAsync(new AnalysisReq
                                         {
                                             BlobRef = outBlob.Name
