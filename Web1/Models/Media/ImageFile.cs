@@ -20,5 +20,9 @@ namespace Web1.Models.Media
 
         [UIHint(UIHint.Textarea)]
         public virtual string AsciiArt { get; set; }
+
+        public virtual string Description { get; set; }
+
+        public virtual string Tags { get; set; }
     }
 }

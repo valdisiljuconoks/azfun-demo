@@ -1,24 +1,24 @@
-@using EPiServer
-@using EPiServer.ServiceLocation
-@using Web1
+@using Web1.Business
 @using Web1.Models.Media
 @model PageViewModel<Web1.Models.Pages.StartPage>
 
-@*@Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { CssClass = "row equal-height", tag = Global.ContentAreaTags.FullWidth })*@
-
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/Layouts/_Black.cshtml";
 }
 
 @{
-    var ascii = string.Empty;
-    var repo = ServiceLocator.Current.GetInstance<IContentRepository>();
+    var image = new ImageFile();
     if(Model.CurrentPage.LandingImage != null)
     {
-        var image = repo.Get<ImageFile>(Model.CurrentPage.LandingImage);
-        ascii = image.AsciiArt;
+        image = Model.CurrentPage.LandingImage.GetContent<ImageFile>();
     }
 }
-<pre>
-    @Html.Raw(ascii)
-</pre>
+
+@if(!string.IsNullOrEmpty(image.Description))
+{
+    <h1>@image.Description</h1>
+}
+
+<div class="code">
+@(!string.IsNullOrEmpty(image.AsciiArt) ? Html.Raw(image.AsciiArt) : Html.PropertyFor(m => m.CurrentPage.LandingImage))
+</div>

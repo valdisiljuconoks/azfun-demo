@@ -1,2 +1,5 @@
 {
+  "queues": {
+    "maxPollingInterval": 500
+  }
 }
