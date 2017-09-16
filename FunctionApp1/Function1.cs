@@ -10,14 +10,14 @@ using Shared.Models;
 
 namespace FunctionApp1
 {
-    [StorageAccount("MyStorageConnection")]
+    [StorageAccount("my-storage-connection")]
     public static class Function1
     {
         [FunctionName("Function1")]
         public static async Task<HttpResponseMessage> Run(
 
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")]    Req request,
-            [Blob("in-container/{FileId}")]                        CloudBlockBlob outBlob,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post")]    ProcessingRequest request,
+            [Blob("%input-container%/{FileId}")]                   CloudBlockBlob outBlob,
             [Queue("1-to-cognitive")]                              CloudQueue queue,
             TraceWriter                                            log)
         {

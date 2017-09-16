@@ -16,37 +16,37 @@ namespace Web1.Business.Initialization
     [ModuleDependency(typeof(InitializationModule))]
     public class MediaToAsciiArtHandler : IInitializableModule
     {
+        private static readonly HttpClient _funcClient = new HttpClient();
+
         public void Initialize(InitializationEngine context)
         {
             var canon = ServiceLocator.Current.GetInstance<IContentEvents>();
-            canon.PublishedContent += CanonOnPublishedContent;
+            canon.CreatedContent += OnImageCreated;
         }
 
         public void Uninitialize(InitializationEngine context)
         {
             var canon = ServiceLocator.Current.GetInstance<IContentEvents>();
-            canon.PublishedContent -= CanonOnPublishedContent;
+            canon.CreatedContent -= OnImageCreated;
         }
 
-        private void CanonOnPublishedContent(object sender, ContentEventArgs contentEventArgs)
+        private void OnImageCreated(object sender, ContentEventArgs args)
         {
-            if(contentEventArgs.Content is ImageData img)
+            if(args.Content is ImageData img)
             {
                 using (var stream = img.BinaryData.OpenRead())
                 {
                     var bytes = stream.ReadAllBytes();
-                    var result = CallFunction(img.ContentGuid.ToString(), bytes).GetAwaiter().GetResult();
+                    var result = AsyncHelper.RunSync(() => CallFunctionAsync(img.ContentGuid.ToString(), bytes));
                 }
             }
         }
 
-        private static readonly HttpClient _funcClient = new HttpClient();
-
-        static async Task<string> CallFunction(string contentReference, byte[] byteData)
+        private static async Task<string> CallFunctionAsync(string contentReference, byte[] byteData)
         {
             var uri = "http://localhost:7071/api/Function1";
 
-            var req = new Req
+            var req = new ProcessingRequest
                       {
                           FileId = contentReference,
                           Content = byteData

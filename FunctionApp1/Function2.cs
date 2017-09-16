@@ -10,15 +10,15 @@ using Shared.Models;
 
 namespace FunctionApp1
 {
-    [StorageAccount("MyStorageConnection")]
+    [StorageAccount("my-storage-connection")]
     public static class Function2
     {
         [FunctionName("Function2")]
         [return: Queue("2-to-ascii")]
         public static async Task<CloudQueueMessage> Run(
-            [QueueTrigger("1-to-cognitive")]                     AnalysisReq request,
-            [Blob("in-container/{BlobRef}", FileAccess.Read)]    Stream inBlob,
-                                                                 TraceWriter log)
+            [QueueTrigger("1-to-cognitive")]                          AnalysisReq request,
+            [Blob("%input-container%/{BlobRef}", FileAccess.Read)]    Stream inBlob,
+                                                                      TraceWriter log)
         {
             log.Info("Running image analysis...");
 

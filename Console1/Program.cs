@@ -32,7 +32,7 @@ namespace Console1
 
             var byteData = GetImageAsByteArray("c:\\temp\\pic.jpg");
 
-            var req = new Req
+            var req = new ProcessingRequest
                       {
                           FileId = "pic.jpg",
                           Content = byteData

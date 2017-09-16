@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
-using System.Linq;
+using System.Net.Http;
 using System.Text;
 using EPiServer;
 using EPiServer.DataAccess;
@@ -32,46 +31,71 @@ namespace Web1.ScheduledJobs
             _stopSignaled = true;
         }
 
+        private static readonly Lazy<HttpClient> _httpClient = new Lazy<HttpClient>(() => new HttpClient());
+
         public override string Execute()
         {
             OnStatusChanged($"Starting execution of {GetType()}");
 
-            var account = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["MyStorageConnection"].ConnectionString);
+            var log = new StringBuilder();
+
+            var response = AsyncHelper.RunSync(() => _httpClient.Value.GetAsync("http://localhost:7071/api/Settings"));
+            var settings = JsonConvert.DeserializeObject<SettingsMessage>(AsyncHelper.RunSync(() => response.Content.ReadAsStringAsync()));
+
+            var account = CloudStorageAccount.Parse(settings.StorageUrl);
 
             var queueClient = account.CreateCloudQueueClient();
-            var queue = queueClient.GetQueueReference("3-done");
-            var draftMsg = queue.GetMessage();
+            var queue = queueClient.GetQueueReference(settings.DoneQueueName);
 
-            if(draftMsg == null)
+            var draftMsg = queue.GetMessage();
+            if (draftMsg == null)
                 return "No mesages found in the queue";
 
-            var message = JsonConvert.DeserializeObject<AsciiArtResult>(draftMsg.AsString);
-
-            var blobClient = account.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference("out-container");
-            var asciiBlob = container.GetBlobReference(message.BlobRef);
-
-            var image = _repository.Get<ImageFile>(Guid.Parse(message.BlobRef));
-            var writable = image.MakeWritable<ImageFile>();
-
-            using (var stream = new MemoryStream())
+            while (draftMsg != null)
             {
-                asciiBlob.DownloadToStream(stream);
-                var asciiArt = Encoding.UTF8.GetString(stream.ToArray());
+                var message = JsonConvert.DeserializeObject<AsciiArtResult>(draftMsg.AsString);
 
-                writable.AsciiArt = asciiArt;
-                writable.Description = message.Description;
-                writable.Tags = string.Join(",", message.Tags);
+                log.AppendLine($"Started processing image ({message.BlobRef})...");
 
-                _repository.Save(writable, SaveAction.Publish);
+                var blobClient = account.CreateCloudBlobClient();
+                var container = blobClient.GetContainerReference(settings.DoneContainerName);
+                var asciiBlob = container.GetBlobReference(message.BlobRef);
+
+                try
+                {
+                    var image = _repository.Get<ImageFile>(Guid.Parse(message.BlobRef));
+                    var writable = image.MakeWritable<ImageFile>();
+
+                    using (var stream = new MemoryStream())
+                    {
+                        asciiBlob.DownloadToStream(stream);
+                        var asciiArt = Encoding.UTF8.GetString(stream.ToArray());
+
+                        writable.AsciiArt = asciiArt;
+                        writable.Description = message.Description;
+                        writable.Tags = string.Join(",", message.Tags);
+
+                        _repository.Save(writable, SaveAction.Publish);
+                    }
+
+                    queue.DeleteMessage(draftMsg);
+
+                    log.AppendLine($"Finished image ({message.BlobRef}).");
+
+                    if(_stopSignaled)
+                        return "Stop of job was called";
+                }
+                catch (Exception e)
+                {
+                    // TODO proper error handling
+                    log.AppendLine($"Error occoured: {e.Message}");
+                }
+
+                draftMsg = queue.GetMessage();
             }
 
-            queue.DeleteMessage(draftMsg);
 
-            if(_stopSignaled)
-                return "Stop of job was called";
-
-            return "Images updated successfully.";
+            return log.ToString();
         }
     }
 }

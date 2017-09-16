@@ -1,5 +1,5 @@
 ﻿namespace Shared.Models {
-    public class Req
+    public class ProcessingRequest
     {
         public string FileId { get; set; }
         public byte[] Content { get; set; }

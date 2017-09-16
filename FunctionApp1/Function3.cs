@@ -12,16 +12,16 @@ using Shared.Models;
 
 namespace FunctionApp1
 {
-    [StorageAccount("MyStorageConnection")]
+    [StorageAccount("my-storage-connection")]
     public static class Function3
     {
         [FunctionName("Function3")]
         [return: Queue("3-done")]
         public static async Task<CloudQueueMessage> Run(
-            [QueueTrigger("2-to-ascii")]                            AsciiArtRequest request,
-            [Blob("in-container/{BlobRef}", FileAccess.Read)]       Stream inBlob,
-            [Blob("out-container/{BlobRef}", FileAccess.Write)]     Stream outBlob,
-            TraceWriter log)
+            [QueueTrigger("2-to-ascii")]                                 AsciiArtRequest request,
+            [Blob("%input-container%/{BlobRef}", FileAccess.Read)]       Stream inBlob,
+            [Blob("%output-container%/{BlobRef}", FileAccess.Write)]     Stream outBlob,
+                                                                         TraceWriter log)
         {
             log.Info("Making ASCII art...");
 
@@ -31,6 +31,15 @@ namespace FunctionApp1
             var result = new AsciiArtResult(request.BlobRef, request.Description, request.Tags);
             return result.AsQueueItem();
         }
+
+
+
+
+
+
+
+
+
 
 
 
