@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Shared.Models;
 
@@ -25,7 +24,7 @@ namespace FunctionApp1
         {
             log.Info("Making ASCII art...");
 
-            var convertedImage = ConvertImageToAscii(inBlob);
+            var convertedImage = ConvertImageToAscii(inBlob, request.Width);
             await outBlob.WriteAsync(convertedImage, 0, convertedImage.Length);
 
             var result = new AsciiArtResult(request.BlobRef, request.Description, request.Tags);
@@ -57,10 +56,10 @@ namespace FunctionApp1
         // Copyright: Code for ASCII convert used from http://www.c-sharpcorner.com/article/generating-ascii-art-from-an-image-using-C-Sharp/
         private static readonly string[] _AsciiChars = { "#", "#", "@", "%", "=", "+", "*", ":", "-", ".", "&nbsp;" };
 
-        private static byte[] ConvertImageToAscii(Stream image)
+        private static byte[] ConvertImageToAscii(Stream image, int width)
         {
             var bitmap = new Bitmap(image, true);
-            bitmap = GetReSizedImage(bitmap, 100);
+            bitmap = GetReSizedImage(bitmap, width);
             return Encoding.UTF8.GetBytes(ConvertToAscii(bitmap));
         }
 

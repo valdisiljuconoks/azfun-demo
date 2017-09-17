@@ -26,7 +26,8 @@ namespace FunctionApp1
             await outBlob.UploadFromByteArrayAsync(request.Content, 0, request.Content.Length);
             var analysisRequest = new AnalysisReq
                               {
-                                  BlobRef = outBlob.Name
+                                  BlobRef = outBlob.Name,
+                                  Width = request.Width
                               };
 
             await queue.AddMessageAsync(analysisRequest.AsQueueItem());

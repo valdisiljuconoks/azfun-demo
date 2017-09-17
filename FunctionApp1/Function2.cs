@@ -39,6 +39,7 @@ namespace FunctionApp1
             var asciiArtRequest = new AsciiArtRequest
                                   {
                                       BlobRef = request.BlobRef,
+                                      Width = request.Width,
                                       Description = string.Join(",", result.Description.Captions.Select(c => c.Text)),
                                       Tags = result.Tags.Select(t => t.Name).ToArray()
                                   };

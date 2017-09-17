@@ -49,7 +49,8 @@ namespace Web1.Business.Initialization
             var req = new ProcessingRequest
                       {
                           FileId = contentReference,
-                          Content = byteData
+                          Content = byteData,
+                          Width = 150
                       };
 
             using (var content = new StringContent(JsonConvert.SerializeObject(req)))
