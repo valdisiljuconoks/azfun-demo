@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Web1.ScheduledJobs
 
             var log = new StringBuilder();
 
-            var response = AsyncHelper.RunSync(() => _httpClient.Value.GetAsync("http://localhost:7071/api/Settings"));
+            var response = AsyncHelper.RunSync(() => _httpClient.Value.GetAsync(ConfigurationManager.AppSettings["func:RequestAscii"]));
             var settings = JsonConvert.DeserializeObject<SettingsMessage>(AsyncHelper.RunSync(() => response.Content.ReadAsStringAsync()));
 
             var account = CloudStorageAccount.Parse(settings.StorageUrl);

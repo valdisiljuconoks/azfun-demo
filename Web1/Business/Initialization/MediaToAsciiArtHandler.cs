@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Configuration;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using EPiServer;
@@ -44,7 +45,7 @@ namespace Web1.Business.Initialization
 
         private static async Task<string> CallFunctionAsync(string contentReference, byte[] byteData)
         {
-            var uri = "http://localhost:7071/api/Function1";
+            var uri = ConfigurationManager.AppSettings["func:RequestAscii"];
 
             var req = new ProcessingRequest
                       {

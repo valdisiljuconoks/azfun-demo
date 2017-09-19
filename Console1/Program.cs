@@ -28,7 +28,8 @@ namespace Console1
         static async Task<string> CallFunction()
         {
             var funcClient = new HttpClient();
-            var uri = "http://localhost:7071/api/Function1";
+            //var uri = "http://localhost:7071/api/Function1";
+            var uri = "https://riga-azure-cloud-test.azurewebsites.net/api/Function1";
 
             var byteData = GetImageAsByteArray("c:\\temp\\pic.jpg");
 
