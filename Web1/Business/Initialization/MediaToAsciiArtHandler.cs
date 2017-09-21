@@ -45,7 +45,7 @@ namespace Web1.Business.Initialization
 
         private static async Task<string> CallFunctionAsync(string contentReference, byte[] byteData)
         {
-            var uri = ConfigurationManager.AppSettings["func:RequestAscii"];
+            var uri = ConfigurationManager.AppSettings["func:RequestAsciiUri"];
 
             var req = new ProcessingRequest
                       {

@@ -40,7 +40,7 @@ namespace Web1.ScheduledJobs
 
             var log = new StringBuilder();
 
-            var response = AsyncHelper.RunSync(() => _httpClient.Value.GetAsync(ConfigurationManager.AppSettings["func:RequestAscii"]));
+            var response = AsyncHelper.RunSync(() => _httpClient.Value.GetAsync(ConfigurationManager.AppSettings["func:SettingsUri"]));
             var settings = JsonConvert.DeserializeObject<SettingsMessage>(AsyncHelper.RunSync(() => response.Content.ReadAsStringAsync()));
 
             var account = CloudStorageAccount.Parse(settings.StorageUrl);
