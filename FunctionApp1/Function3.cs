@@ -17,6 +17,7 @@ namespace FunctionApp1
         [FunctionName("Function3")]
         [return: Queue("3-done")]
         public static async Task<CloudQueueMessage> Run(
+
             [QueueTrigger("2-to-ascii")]                                 AsciiArtRequest request,
             [Blob("%input-container%/{BlobRef}", FileAccess.Read)]       Stream inBlob,
             [Blob("%output-container%/{BlobRef}", FileAccess.Write)]     Stream outBlob,

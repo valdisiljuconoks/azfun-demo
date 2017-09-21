@@ -16,6 +16,7 @@ namespace FunctionApp1
         [FunctionName("Function2")]
         [return: Queue("2-to-ascii")]
         public static async Task<CloudQueueMessage> Run(
+
             [QueueTrigger("1-to-cognitive")]                          AnalysisReq request,
             [Blob("%input-container%/{BlobRef}", FileAccess.Read)]    Stream inBlob,
                                                                       TraceWriter log)

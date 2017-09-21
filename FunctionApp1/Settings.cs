@@ -11,15 +11,15 @@ namespace FunctionApp1
     {
         [FunctionName("Settings")]
         public static SettingsMessage Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]    HttpRequestMessage req,
-                                                                                        TraceWriter log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req,
+            TraceWriter log)
         {
             return new SettingsMessage
                    {
                        StorageUrl = Environment.GetEnvironmentVariable("my-storage-connection"),
                        DoneQueueName = Environment.GetEnvironmentVariable("done-queue"),
-                       DoneContainerName = Environment.GetEnvironmentVariable("output-container"),
-            };
+                       DoneContainerName = Environment.GetEnvironmentVariable("output-container")
+                   };
         }
     }
 }
