@@ -33,13 +33,13 @@ namespace Web1.Business.Initialization
 
         private void OnImageCreated(object sender, ContentEventArgs args)
         {
-            if(args.Content is ImageData img)
+            if(!(args.Content is ImageData img))
+                return;
+
+            using (var stream = img.BinaryData.OpenRead())
             {
-                using (var stream = img.BinaryData.OpenRead())
-                {
-                    var bytes = stream.ReadAllBytes();
-                    var result = AsyncHelper.RunSync(() => CallFunctionAsync(img.ContentGuid.ToString(), bytes));
-                }
+                var bytes = stream.ReadAllBytes();
+                AsyncHelper.RunSync(() => CallFunctionAsync(img.ContentGuid.ToString(), bytes));
             }
         }
 

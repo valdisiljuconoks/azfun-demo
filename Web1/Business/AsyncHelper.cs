@@ -2,7 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Web1.Business {
+namespace Web1.Business
+{
     internal static class AsyncHelper
     {
         private static readonly TaskFactory _myTaskFactory = new TaskFactory(CancellationToken.None,
