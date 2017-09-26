@@ -5,6 +5,7 @@ using EPiServer.ServiceLocation;
 using Web1.Business.Rendering;
 using EPiServer.Web.Mvc;
 using EPiServer.Web.Mvc.Html;
+using Web1.Features.AsciiArt;
 
 namespace Web1.Business.Initialization
 {
@@ -18,8 +19,12 @@ namespace Web1.Business.Initialization
             context.ConfigurationComplete += (o, e) =>
             {
                 //Register custom implementations that should be used in favour of the default implementations
-                context.Services.AddTransient<IContentRenderer, ErrorHandlingContentRenderer>()
-                    .AddTransient<ContentAreaRenderer, AlloyContentAreaRenderer>();
+                context.Services
+                       .AddTransient<IContentRenderer, ErrorHandlingContentRenderer>()
+                       .AddTransient<ContentAreaRenderer, AlloyContentAreaRenderer>()
+                       .AddTransient<IAsciiResponseRetriever, CloudQueueAsciiResponseRetriever>()
+                       .AddSingleton<IAsciiArtServiceSettingsProvider, AsciiArtServiceSettingsProvider>()
+                       .AddTransient<IAsciiArtImageProcessor, AsciiArtImageProcessor>();
             };
         }
 

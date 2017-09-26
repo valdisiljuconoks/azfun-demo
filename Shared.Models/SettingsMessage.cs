@@ -1,13 +1,15 @@
 ﻿namespace Shared.Models
 {
     public class SettingsMessage
+
     {
-        public string DoneQueueName { get; set; }
+        public SettingsMessage(string storageUrl, string doneQueueName)
+        {
+            StorageUrl = storageUrl;
+            DoneQueueName = doneQueueName;
+        }
 
-        public string SASToken { get; set; }
-
-        public string StorageUrl { get; set; }
-
-        public string DoneContainerName { get; set; }
+        public string DoneQueueName { get; }
+        public string StorageUrl { get; }
     }
 }

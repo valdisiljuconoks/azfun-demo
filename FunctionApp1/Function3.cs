@@ -28,7 +28,11 @@ namespace FunctionApp1
             var convertedImage = ConvertImageToAscii(inBlob, request.Width);
             await outBlob.WriteAsync(convertedImage, 0, convertedImage.Length);
 
-            var result = new AsciiArtResult(request.BlobRef, request.Description, request.Tags);
+            var result = new AsciiArtResult(request.BlobRef,
+                                            Environment.GetEnvironmentVariable("output-container"),
+                                            request.Description,
+                                            request.Tags);
+
             return result.AsQueueItem();
         }
 

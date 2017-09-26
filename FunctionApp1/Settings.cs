@@ -14,12 +14,8 @@ namespace FunctionApp1
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req,
             TraceWriter log)
         {
-            return new SettingsMessage
-                   {
-                       StorageUrl = Environment.GetEnvironmentVariable("my-storage-connection"),
-                       DoneQueueName = Environment.GetEnvironmentVariable("done-queue"),
-                       DoneContainerName = Environment.GetEnvironmentVariable("output-container")
-                   };
+            return new SettingsMessage(Environment.GetEnvironmentVariable("my-storage-connection"),
+                                       Environment.GetEnvironmentVariable("done-queue"));
         }
     }
 }

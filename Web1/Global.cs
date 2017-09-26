@@ -1,19 +1,34 @@
-using EPiServer.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using EPiServer.DataAnnotations;
 
 namespace Web1
 {
-
     public class Global
     {
+        /// <summary>
+        ///     Virtual path to folder with static graphics, such as "~/Static/gfx/"
+        /// </summary>
+        public const string StaticGraphicsFolderPath = "~/Static/gfx/";
         public static readonly string LoginPath = "/util/login.aspx";
         public static readonly string AppRelativeLoginPath = string.Format("~{0}", LoginPath);
 
+        public static Dictionary<string, int> ContentAreaTagWidths = new Dictionary<string, int>
+                                                                     {
+                                                                         { ContentAreaTags.FullWidth, ContentAreaWidths.FullWidth },
+                                                                         { ContentAreaTags.TwoThirdsWidth, ContentAreaWidths.TwoThirdsWidth },
+                                                                         { ContentAreaTags.HalfWidth, ContentAreaWidths.HalfWidth },
+                                                                         { ContentAreaTags.OneThirdWidth, ContentAreaWidths.OneThirdWidth }
+                                                                     };
+
+        internal static readonly Lazy<HttpClient> HttpClient = new Lazy<HttpClient>(() => new HttpClient());
+
         /// <summary>
-        /// Group names for content types and properties
+        ///     Group names for content types and properties
         /// </summary>
-        [GroupDefinitions()]
+        [GroupDefinitions]
         public static class GroupNames
         {
             [Display(Name = "Contact", Order = 1)]
@@ -39,7 +54,7 @@ namespace Web1
         }
 
         /// <summary>
-        /// Tags to use for the main widths used in the Bootstrap HTML framework
+        ///     Tags to use for the main widths used in the Bootstrap HTML framework
         /// </summary>
         public static class ContentAreaTags
         {
@@ -51,7 +66,7 @@ namespace Web1
         }
 
         /// <summary>
-        /// Main widths used in the Bootstrap HTML framework
+        ///     Main widths used in the Bootstrap HTML framework
         /// </summary>
         public static class ContentAreaWidths
         {
@@ -61,27 +76,13 @@ namespace Web1
             public const int OneThirdWidth = 4;
         }
 
-        public static Dictionary<string, int> ContentAreaTagWidths = new Dictionary<string, int>
-            {
-                { ContentAreaTags.FullWidth, ContentAreaWidths.FullWidth },
-                { ContentAreaTags.TwoThirdsWidth, ContentAreaWidths.TwoThirdsWidth },
-                { ContentAreaTags.HalfWidth, ContentAreaWidths.HalfWidth },
-                { ContentAreaTags.OneThirdWidth, ContentAreaWidths.OneThirdWidth }
-            };
-
         /// <summary>
-        /// Names used for UIHint attributes to map specific rendering controls to page properties
+        ///     Names used for UIHint attributes to map specific rendering controls to page properties
         /// </summary>
         public static class SiteUIHints
         {
             public const string Contact = "contact";
             public const string Strings = "StringList";
         }
-
-        /// <summary>
-        /// Virtual path to folder with static graphics, such as "~/Static/gfx/"
-        /// </summary>
-        public const string StaticGraphicsFolderPath = "~/Static/gfx/";
     }
 }
-
