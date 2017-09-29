@@ -4,6 +4,6 @@ namespace Web1.Features.AsciiArt
 {
     public interface IAsciiArtServiceSettingsProvider
     {
-        SettingsMessage GetSettings();
+        SettingsMessage Settings { get; }
     }
 }

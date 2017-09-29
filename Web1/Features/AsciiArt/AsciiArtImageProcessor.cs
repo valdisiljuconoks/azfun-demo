@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using EPiServer;
 using EPiServer.DataAccess;
+using EPiServer.Security;
 using Microsoft.WindowsAzure.Storage;
 using Shared.Models;
 using Web1.Business;
@@ -37,7 +38,7 @@ namespace Web1.Features.AsciiArt
                 writable.Description = result.Description;
                 writable.Tags = string.Join(",", result.Tags);
 
-                _repository.Save(writable, SaveAction.Publish);
+                _repository.Save(writable, SaveAction.Publish, AccessLevel.NoAccess);
             }
         }
     }

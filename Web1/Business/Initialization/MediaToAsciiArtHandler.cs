@@ -1,14 +1,9 @@
-﻿using System.Configuration;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using EPiServer;
+﻿using EPiServer;
 using EPiServer.Core;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
-using Newtonsoft.Json;
-using Shared.Models;
+using Web1.Features.AsciiArt;
 using InitializationModule = EPiServer.Web.InitializationModule;
 
 namespace Web1.Business.Initialization
@@ -17,11 +12,13 @@ namespace Web1.Business.Initialization
     [ModuleDependency(typeof(InitializationModule))]
     public class MediaToAsciiArtHandler : IInitializableModule
     {
-        private static readonly HttpClient _funcClient = new HttpClient();
+        private IAsciiArtRequester _uploader;
 
         public void Initialize(InitializationEngine context)
         {
             var canon = ServiceLocator.Current.GetInstance<IContentEvents>();
+            _uploader = ServiceLocator.Current.GetInstance<IAsciiArtRequester>();
+
             canon.CreatedContent += OnImageCreated;
         }
 
@@ -39,26 +36,7 @@ namespace Web1.Business.Initialization
             using (var stream = img.BinaryData.OpenRead())
             {
                 var bytes = stream.ReadAllBytes();
-                AsyncHelper.RunSync(() => CallFunctionAsync(img.ContentGuid.ToString(), bytes));
-            }
-        }
-
-        private static async Task<string> CallFunctionAsync(string contentReference, byte[] byteData)
-        {
-            var uri = ConfigurationManager.AppSettings["func:RequestAsciiUri"];
-
-            var req = new ProcessingRequest
-                      {
-                          FileId = contentReference,
-                          Content = byteData,
-                          Width = 150
-                      };
-
-            using (var content = new StringContent(JsonConvert.SerializeObject(req)))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await _funcClient.PostAsync(uri, content).ConfigureAwait(false);
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                _uploader.Upload(img.ContentGuid.ToString(), bytes);
             }
         }
     }

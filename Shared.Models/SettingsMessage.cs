@@ -11,5 +11,6 @@
 
         public string DoneQueueName { get; }
         public string StorageUrl { get; }
+        public string RequestFunctionUri { get; set; }
     }
 }

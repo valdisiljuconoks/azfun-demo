@@ -9,19 +9,19 @@ namespace Web1.Features.AsciiArt
     class CloudQueueAsciiResponseRetriever : IAsciiResponseRetriever
     {
         private readonly IAsciiArtImageProcessor _processor;
-        private readonly IAsciiArtServiceSettingsProvider _settings;
+        private readonly IAsciiArtServiceSettingsProvider _settingsProvider;
 
         public CloudQueueAsciiResponseRetriever(
-            IAsciiArtServiceSettingsProvider settings,
+            IAsciiArtServiceSettingsProvider settingsProvider,
             IAsciiArtImageProcessor processor)
         {
-            _settings = settings;
+            _settingsProvider = settingsProvider;
             _processor = processor;
         }
 
         public void Pump(StringBuilder log)
         {
-            var settings = _settings.GetSettings();
+            var settings = _settingsProvider.Settings;
             var account = CloudStorageAccount.Parse(settings.StorageUrl);
             var queueClient = account.CreateCloudQueueClient();
             var queue = queueClient.GetQueueReference(settings.DoneQueueName);

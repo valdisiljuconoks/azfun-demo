@@ -300,9 +300,11 @@
     <Compile Include="Controllers\StartPageController.cs" />
     <Compile Include="Controllers\VideoFileController.cs" />
     <Compile Include="Features\AsciiArt\AsciiArtImageProcessor.cs" />
+    <Compile Include="Features\AsciiArt\AsciiArtRequester.cs" />
     <Compile Include="Features\AsciiArt\AsciiArtServiceSettingsProvider.cs" />
     <Compile Include="Features\AsciiArt\CloudQueueAsciiResponseRetriever.cs" />
     <Compile Include="Features\AsciiArt\IAsciiArtImageProcessor.cs" />
+    <Compile Include="Features\AsciiArt\IAsciiArtRequester.cs" />
     <Compile Include="Features\AsciiArt\IAsciiArtServiceSettingsProvider.cs" />
     <Compile Include="Features\AsciiArt\IAsciiResponseRetriever.cs" />
     <Compile Include="Global.asax.cs">
